@@ -17,12 +17,14 @@ const BUS_HIGH = 9000;
 const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function CostCalculator() {
+  const [teams, setTeams] = useState(1);
   const [trips, setTrips] = useState(4);
 
+  const teamFees = teams * TEAM_FEE;
   const travelLow = trips * BUS_LOW;
   const travelHigh = trips * BUS_HIGH;
-  const totalLow = TEAM_FEE + travelLow;
-  const totalHigh = TEAM_FEE + travelHigh;
+  const totalLow = teamFees + travelLow;
+  const totalHigh = teamFees + travelHigh;
 
   return (
     <div className="card-surface p-7 sm:p-9">
@@ -31,28 +33,45 @@ export function CostCalculator() {
         <span className="chip bg-silver-100 text-[10px] text-steel-deep">Estimate</span>
       </div>
 
-      <label className="mt-6 block">
-        <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
-          Road trips per team
-          <span className="text-navy">{trips}</span>
-        </span>
-        <input
-          type="range"
-          min={0}
-          max={8}
-          value={trips}
-          onChange={(e) => setTrips(Number(e.target.value))}
-          className="mt-3 w-full accent-[var(--color-navy)]"
-        />
-      </label>
+      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <label className="block">
+          <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
+            Teams in the league
+            <span className="text-navy">{teams}</span>
+          </span>
+          <input
+            type="range"
+            min={1}
+            max={5}
+            value={teams}
+            onChange={(e) => setTeams(Number(e.target.value))}
+            className="mt-3 w-full accent-[var(--color-navy)]"
+          />
+        </label>
+
+        <label className="block">
+          <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
+            Road trips per team
+            <span className="text-navy">{trips}</span>
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={8}
+            value={trips}
+            onChange={(e) => setTrips(Number(e.target.value))}
+            className="mt-3 w-full accent-[var(--color-navy)]"
+          />
+        </label>
+      </div>
 
       <dl className="mt-7 space-y-3 border-t border-hairline pt-5">
         <div className="flex items-baseline justify-between gap-2">
           <dt className="text-sm text-muted">
-            Annual per-team fee
-            <span className="block text-xs text-steel">Flat, per team</span>
+            Annual team fees
+            <span className="block text-xs text-steel">{teams} team{teams === 1 ? '' : 's'} × $2,500</span>
           </dt>
-          <dd className="text-2xl font-bold tabular-nums text-navy">{usd(TEAM_FEE)}</dd>
+          <dd className="text-2xl font-bold tabular-nums text-navy">{usd(teamFees)}</dd>
         </div>
         <div className="flex items-baseline justify-between gap-2">
           <dt className="text-sm text-muted">
