@@ -42,7 +42,7 @@ export function CostCalculator() {
           <input
             type="range"
             min={1}
-            max={5}
+            max={6}
             value={teams}
             onChange={(e) => setTeams(Number(e.target.value))}
             className="mt-3 w-full accent-[var(--color-navy)]"
@@ -56,8 +56,8 @@ export function CostCalculator() {
           </span>
           <input
             type="range"
-            min={0}
-            max={8}
+            min={1}
+            max={6}
             value={trips}
             onChange={(e) => setTrips(Number(e.target.value))}
             className="mt-3 w-full accent-[var(--color-navy)]"
