@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   ABA Membership Portal — Design System
+   Direction: navy + graphite + silver, white canvas, cinematic + premium.
+   Reference points: IMG admissions, Apple product pages, Stripe/Linear SaaS.
+   ========================================================================== */
+
+@theme {
+  /* Core brand */
+  --color-navy: #0a2240;
+  --color-navy-700: #0f2d52;
+  --color-navy-900: #06162a;
+
+  /* Graphite scale (neutral structure) */
+  --color-graphite-950: #0b0f14;
+  --color-graphite-900: #11161d;
+  --color-graphite-800: #1f2933;
+  --color-graphite-700: #323d49;
+  --color-graphite-500: #5b6b7d;
+  --color-graphite-400: #7c8a9a;
+
+  /* Silver / steel accents */
+  --color-silver-50: #f6f8fa;
+  --color-silver-100: #eef2f6;
+  --color-silver-200: #e2e8f0;
+  --color-silver-300: #cbd5e1;
+  --color-steel: #9fb3c8;
+  --color-steel-deep: #486581;
+
+  /* Semantic surfaces */
+  --color-canvas: #ffffff;
+  --color-ink: #0a2240;
+  --color-muted: #5b6b7d;
+  --color-hairline: #e6ebf1;
+
+  /* Accent — restrained, used sparingly for emphasis */
+  --color-accent: #1d6fb8;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Premium easing + timing */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animations */
+  --animate-fade-up: fade-up 0.7s var(--ease-premium) both;
+  --animate-fade-in: fade-in 0.9s var(--ease-premium) both;
+  --animate-float: float 7s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a2240;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* offset anchor scrolling so sticky/sectioned content isn't clipped */
+  scroll-padding-top: 2rem;
+}
+
+html, body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Force light mode — public-facing media kit must render identically. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #0a2240;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Scroll-reveal primitive.
+   Elements start hidden + shifted; the Reveal client component adds
+   `data-revealed` when the element enters the viewport.
+   -------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s var(--ease-premium),
+    transform 0.7s var(--ease-premium);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced-motion: show everything immediately, kill smooth scroll. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Reusable composition utilities
+   -------------------------------------------------------------------------- */
+
+/* Section vertical rhythm */
+.section-pad {
+  padding-top: clamp(5rem, 10vw, 9rem);
+  padding-bottom: clamp(5rem, 10vw, 9rem);
+}
+
+/* Eyebrow label above section headings */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-steel-deep);
+}
+.eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: var(--color-steel);
+}
+
+/* Fluid display headings */
+.display-1 {
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+.display-2 {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.07;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Premium card surface */
+.card-surface {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgba(10, 34, 64, 0.04),
+    0 8px 24px -12px rgba(10, 34, 64, 0.10);
+  transition: transform 0.4s var(--ease-premium), box-shadow 0.4s var(--ease-premium), border-color 0.4s var(--ease-premium);
+}
+.card-surface:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-silver-300);
+  box-shadow:
+    0 2px 4px rgba(10, 34, 64, 0.05),
+    0 24px 48px -20px rgba(10, 34, 64, 0.22);
+}
+
+/* Subtle dotted/grid texture for dark hero + dark sections */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(159, 179, 200, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(159, 179, 200, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Radial spotlight behind hero content */
+.hero-spotlight {
+  background:
+    radial-gradient(60% 60% at 50% 0%, rgba(29, 111, 184, 0.28) 0%, transparent 70%),
+    radial-gradient(80% 80% at 80% 100%, rgba(72, 101, 129, 0.20) 0%, transparent 60%);
+}
+
+/* Pill / chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0 1.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: transform 0.25s var(--ease-premium), box-shadow 0.25s var(--ease-premium), background-color 0.25s var(--ease-premium), color 0.25s var(--ease-premium);
+  cursor: pointer;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background: var(--color-navy);
+  color: #fff;
+  box-shadow: 0 12px 30px -12px rgba(10, 34, 64, 0.55);
+}
+.btn-primary:hover { background: var(--color-navy-700); }
+
+.btn-light {
+  background: #fff;
+  color: var(--color-navy);
+  border: 1px solid var(--color-silver-200);
+}
+.btn-light:hover { border-color: var(--color-steel); }
+
+.btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* Tap-target floor for mobile interactives */
+.tap-target { min-height: 44px; min-width: 44px; }
+
+/* Thin scrollbar for horizontal scrollers */
+.scrollbar-thin::-webkit-scrollbar { height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-silver-300);
+  border-radius: 9999px;
+}
