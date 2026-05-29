@@ -3,46 +3,48 @@
 import { useState } from 'react';
 
 /**
- * Future-ready cost estimator placeholder. The math here is illustrative only
- * (clearly labeled) — a production version would pull real per-division rates,
- * event fees, and travel models. Kept self-contained so it can later be wired
- * to live pricing data without changing the surrounding section.
+ * Season cost estimator using the league's real fees:
+ *   - Annual per-team fee: $2,500 (average)
+ *   - Per-player registration: $195
+ *   - Travel: team-covered; a charter bus trip runs ~$3,000–$9,000
+ * The one-time $5,000 initiation fee is shown separately (not annual).
  */
-const DIVISION_BASE: Record<string, number> = {
-  Premier: 4200,
-  Varsity: 2800,
-  'JV / Middle School': 1600,
-};
-const PER_TRIP = 1100; // illustrative blended travel + lodging per road trip
+const TEAM_FEE = 2500;
+const PLAYER_FEE = 195;
+const BUS_LOW = 3000;
+const BUS_HIGH = 9000;
+
+const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function CostCalculator() {
-  const [division, setDivision] = useState('Premier');
-  const [trips, setTrips] = useState(5);
+  const [players, setPlayers] = useState(18);
+  const [trips, setTrips] = useState(4);
 
-  const annual = DIVISION_BASE[division] + trips * PER_TRIP;
-  const formatted = annual.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const leagueFees = TEAM_FEE + players * PLAYER_FEE;
+  const travelLow = trips * BUS_LOW;
+  const travelHigh = trips * BUS_HIGH;
 
   return (
     <div className="card-surface p-7 sm:p-9">
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-lg font-semibold text-navy">Estimate your season</h3>
-        <span className="chip bg-silver-100 text-[10px] text-steel-deep">Illustrative</span>
+        <span className="chip bg-silver-100 text-[10px] text-steel-deep">Estimate</span>
       </div>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wider text-steel-deep">Division</span>
-          <select
-            value={division}
-            onChange={(e) => setDivision(e.target.value)}
-            className="tap-target mt-2 w-full rounded-lg border border-silver-200 bg-white px-3 text-sm text-navy focus:border-navy focus:outline-none"
-          >
-            {Object.keys(DIVISION_BASE).map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
+          <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
+            Roster size
+            <span className="text-navy">{players} players</span>
+          </span>
+          <input
+            type="range"
+            min={10}
+            max={35}
+            value={players}
+            onChange={(e) => setPlayers(Number(e.target.value))}
+            className="mt-3 w-full accent-[var(--color-navy)]"
+          />
         </label>
 
         <label className="block">
@@ -61,13 +63,28 @@ export function CostCalculator() {
         </label>
       </div>
 
-      <div className="mt-7 flex flex-wrap items-baseline justify-between gap-2 border-t border-hairline pt-5">
-        <span className="text-sm text-muted">Estimated annual team fees</span>
-        <span className="display-2 text-3xl tabular-nums text-navy">{formatted}</span>
-      </div>
-      <p className="mt-3 text-xs text-steel">
-        Placeholder estimate for illustration only. Excludes the one-time initiation fee and is not a quote —
-        request a budget projection for figures specific to your program.
+      <dl className="mt-7 space-y-3 border-t border-hairline pt-5">
+        <div className="flex items-baseline justify-between gap-2">
+          <dt className="text-sm text-muted">
+            Annual league fees
+            <span className="block text-xs text-steel">$2,500 team + ${PLAYER_FEE}/player</span>
+          </dt>
+          <dd className="text-2xl font-bold tabular-nums text-navy">{usd(leagueFees)}</dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-2">
+          <dt className="text-sm text-muted">
+            Estimated travel
+            <span className="block text-xs text-steel">{trips} trip{trips === 1 ? '' : 's'} × $3k–$9k charter bus</span>
+          </dt>
+          <dd className="text-2xl font-bold tabular-nums text-navy">
+            {trips === 0 ? usd(0) : `${usd(travelLow)}–${usd(travelHigh)}`}
+          </dd>
+        </div>
+      </dl>
+
+      <p className="mt-4 text-xs text-steel">
+        Estimate only — excludes the one-time $5,000 league initiation fee and varies by division, events, and
+        travel method. Request a budget projection for figures specific to your program.
       </p>
     </div>
   );

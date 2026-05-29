@@ -300,52 +300,61 @@ export const ECONOMICS_INTRO = {
     'ABA membership is built around one straightforward principle: a single league initiation fee, then annual fees that scale with the divisions and events you participate in.',
 };
 
-export const INITIATION_FEE = {
-  amount: '$5,000',
-  label: 'One-Time League Initiation Fee',
-  detail: 'Paid once upon joining. Never paid again.',
-};
-
-export type FeeTier = {
+export type CoreFee = {
+  amount: string;
+  cadence: string;
   name: string;
+  detail: string;
+  /** Bullet list of what the fee includes/covers. */
+  includes?: string[];
   highlight?: boolean;
-  description: string;
-  roadTrips: string;
-  hotelNights: string;
-  notes: string[];
 };
 
-export const FEE_TIERS: FeeTier[] = [
+// The three ABA fees. Figures confirmed by the league (avg per-team fee varies
+// slightly by division/events).
+export const CORE_FEES: CoreFee[] = [
   {
-    name: 'Premier',
+    amount: '$5,000',
+    cadence: 'One-time',
+    name: 'League Initiation Fee',
+    detail: 'Paid once to join the league and become a member — and never paid again.',
+  },
+  {
+    amount: '$2,500',
+    cadence: 'Per team · annual (avg)',
+    name: 'Annual Per-Team Fee',
     highlight: true,
-    description: 'National-level travel and competition.',
-    roadTrips: '5–6 road trips',
-    hotelNights: '~12 hotel nights',
-    notes: ['Highest event participation', 'Maximum media & recruiting visibility', 'GameChanger premium included'],
+    detail:
+      'Covers the League Kickoff event and the postseason double-elimination tournament. In some divisions it also covers a mid-season round-robin league event.',
   },
   {
-    name: 'Varsity',
-    description: 'Balanced regional-national schedule.',
-    roadTrips: '3–4 road trips',
-    hotelNights: '~6–8 hotel nights',
-    notes: ['Postseason event participation', 'Meaningful recruiting exposure', 'GameChanger premium included'],
-  },
-  {
-    name: 'JV / Middle School',
-    description: 'Mostly regional day trips and doubleheaders.',
-    roadTrips: '1–2 road trips',
-    hotelNights: 'Few to no hotel nights',
-    notes: ['Lower travel burden', 'Development-focused', 'GameChanger premium included'],
+    amount: '$195',
+    cadence: 'Per player · annual',
+    name: 'Per-Player Registration',
+    detail: 'Paid directly by each player to register with the league. Covers:',
+    includes: [
+      'Insurance',
+      'GameChanger premium access',
+      'Season-long social media coverage',
+      'ABA player portal',
+      'Combine & evaluation activities',
+    ],
   },
 ];
 
-export const ECONOMICS_INCLUDES = [
-  'Travel expectations by division',
-  'Hotel night estimates',
-  'Umpire fee estimates',
-  'Player registration fees',
-  'GameChanger premium inclusion',
+export const ECONOMICS_NOTES = [
+  {
+    title: 'No ABA gate fees',
+    body: 'ABA home teams charge no gate fees — except at league events, at the discretion of PG, PBR, or LakePoint.',
+  },
+  {
+    title: 'Teams cover their own travel',
+    body: 'Each team budgets its own travel — airfare, vans, or bus. A charter bus trip runs roughly $3,000–$9,000 depending on trip length.',
+  },
+  {
+    title: 'Travel scales by division',
+    body: 'As a general rule, the older, higher divisions carry higher travel costs.',
+  },
 ];
 
 export type BudgetPdf = { title: string; description: string; file: string };
