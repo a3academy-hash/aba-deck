@@ -357,6 +357,21 @@ export const ECONOMICS_NOTES = [
   },
 ];
 
+// Home teams own the operation of every home game — both the costs and the
+// game-day responsibilities. Confirmed by the league.
+export const HOME_TEAM_RESPONSIBILITIES = {
+  title: 'Home teams run the game',
+  body:
+    'For every home game, the home team covers all game-day expenses and responsibilities. Hosting a game means hosting it end to end — securing the venue, staffing it, and getting it on the air.',
+  items: [
+    { label: 'Secure the field', detail: 'Reserve and prepare a regulation field for game day.' },
+    { label: 'Umpires', detail: 'Hire and pay the umpiring crew.' },
+    { label: 'Baseballs', detail: 'Supply the game balls.' },
+    { label: 'Official score', detail: 'Staff the official scorekeeper and keep the book.' },
+    { label: 'Live streaming', detail: 'Set up and run the broadcast of the game.' },
+  ],
+};
+
 export type BudgetPdf = { title: string; description: string; file: string };
 export const BUDGET_PDFS: BudgetPdf[] = [
   { title: 'Premier Budget Projection', description: 'Full national-schedule cost projection.', file: '/pdfs/premier-budget-projection.pdf' },

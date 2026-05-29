@@ -3,7 +3,7 @@ import { Reveal } from '@/components/Reveal';
 import { PricingTable } from '@/components/PricingTable';
 import { PDFDownloadCard } from '@/components/PDFDownloadCard';
 import { CostCalculator } from '@/components/CostCalculator';
-import { BUDGET_PDFS, ECONOMICS_INTRO, ECONOMICS_NOTES } from '@/lib/content';
+import { BUDGET_PDFS, ECONOMICS_INTRO, ECONOMICS_NOTES, HOME_TEAM_RESPONSIBILITIES } from '@/lib/content';
 
 export function MembershipEconomics() {
   return (
@@ -26,6 +26,20 @@ export function MembershipEconomics() {
           <Reveal key={note.title} delay={i * 80} className="card-surface p-6">
             <h4 className="text-sm font-semibold text-navy">{note.title}</h4>
             <p className="mt-2 text-sm leading-relaxed text-muted">{note.body}</p>
+          </Reveal>
+        ))}
+      </div>
+
+      {/* Home team responsibilities */}
+      <Reveal className="mt-14">
+        <h3 className="display-2 text-2xl text-navy sm:text-3xl">{HOME_TEAM_RESPONSIBILITIES.title}</h3>
+        <p className="mt-4 max-w-3xl text-muted">{HOME_TEAM_RESPONSIBILITIES.body}</p>
+      </Reveal>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {HOME_TEAM_RESPONSIBILITIES.items.map((item, i) => (
+          <Reveal key={item.label} delay={i * 60} className="card-surface p-6">
+            <h4 className="text-sm font-semibold text-navy">{item.label}</h4>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{item.detail}</p>
           </Reveal>
         ))}
       </div>
