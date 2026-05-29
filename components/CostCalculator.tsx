@@ -3,73 +3,56 @@
 import { useState } from 'react';
 
 /**
- * Season cost estimator using the league's real fees:
+ * Academy season-budget estimator. Scopes to costs the ACADEMY is responsible
+ * for — the annual per-team fee plus travel. The $195 per-player registration
+ * is paid directly by each player, so it is intentionally excluded here. The
+ * one-time $5,000 initiation fee is also excluded (not annual).
  *   - Annual per-team fee: $2,500 (average)
- *   - Per-player registration: $195
  *   - Travel: team-covered; a charter bus trip runs ~$3,000–$9,000
- * The one-time $5,000 initiation fee is shown separately (not annual).
  */
 const TEAM_FEE = 2500;
-const PLAYER_FEE = 195;
 const BUS_LOW = 3000;
 const BUS_HIGH = 9000;
 
 const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function CostCalculator() {
-  const [players, setPlayers] = useState(18);
   const [trips, setTrips] = useState(4);
 
-  const leagueFees = TEAM_FEE + players * PLAYER_FEE;
   const travelLow = trips * BUS_LOW;
   const travelHigh = trips * BUS_HIGH;
+  const totalLow = TEAM_FEE + travelLow;
+  const totalHigh = TEAM_FEE + travelHigh;
 
   return (
     <div className="card-surface p-7 sm:p-9">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-navy">Estimate your season</h3>
+        <h3 className="text-lg font-semibold text-navy">Estimate your academy budget</h3>
         <span className="chip bg-silver-100 text-[10px] text-steel-deep">Estimate</span>
       </div>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-        <label className="block">
-          <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
-            Roster size
-            <span className="text-navy">{players} players</span>
-          </span>
-          <input
-            type="range"
-            min={10}
-            max={35}
-            value={players}
-            onChange={(e) => setPlayers(Number(e.target.value))}
-            className="mt-3 w-full accent-[var(--color-navy)]"
-          />
-        </label>
-
-        <label className="block">
-          <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
-            Road trips
-            <span className="text-navy">{trips}</span>
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={8}
-            value={trips}
-            onChange={(e) => setTrips(Number(e.target.value))}
-            className="mt-3 w-full accent-[var(--color-navy)]"
-          />
-        </label>
-      </div>
+      <label className="mt-6 block">
+        <span className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-steel-deep">
+          Road trips per team
+          <span className="text-navy">{trips}</span>
+        </span>
+        <input
+          type="range"
+          min={0}
+          max={8}
+          value={trips}
+          onChange={(e) => setTrips(Number(e.target.value))}
+          className="mt-3 w-full accent-[var(--color-navy)]"
+        />
+      </label>
 
       <dl className="mt-7 space-y-3 border-t border-hairline pt-5">
         <div className="flex items-baseline justify-between gap-2">
           <dt className="text-sm text-muted">
-            Annual league fees
-            <span className="block text-xs text-steel">$2,500 team + ${PLAYER_FEE}/player</span>
+            Annual per-team fee
+            <span className="block text-xs text-steel">Flat, per team</span>
           </dt>
-          <dd className="text-2xl font-bold tabular-nums text-navy">{usd(leagueFees)}</dd>
+          <dd className="text-2xl font-bold tabular-nums text-navy">{usd(TEAM_FEE)}</dd>
         </div>
         <div className="flex items-baseline justify-between gap-2">
           <dt className="text-sm text-muted">
@@ -80,11 +63,17 @@ export function CostCalculator() {
             {trips === 0 ? usd(0) : `${usd(travelLow)}–${usd(travelHigh)}`}
           </dd>
         </div>
+        <div className="flex items-baseline justify-between gap-2 border-t border-hairline pt-3">
+          <dt className="text-sm font-semibold text-navy">Estimated academy budget</dt>
+          <dd className="text-2xl font-bold tabular-nums text-navy">
+            {trips === 0 ? usd(TEAM_FEE) : `${usd(totalLow)}–${usd(totalHigh)}`}
+          </dd>
+        </div>
       </dl>
 
       <p className="mt-4 text-xs text-steel">
-        Estimate only — excludes the one-time $5,000 league initiation fee and varies by division, events, and
-        travel method. Request a budget projection for figures specific to your program.
+        Academy costs only. The $195 per-player registration is paid directly by each player (not the academy),
+        and the one-time $5,000 league initiation fee is excluded. Estimate varies by division and travel method.
       </p>
     </div>
   );

@@ -487,6 +487,18 @@ export const FOUNDING_SCHOOLS: FoundingSchool[] = [
   { name: 'Wellington Sports Academy', location: 'Wellington, FL', divisions: ['Premier', 'Prospect', 'Varsity', 'JV', 'Middle School'], lat: 26.6618, lng: -80.2415, logo: '/logos/wellington.png' },
 ];
 
+// Prospective programs that have expressed interest — shown on the map as a
+// distinct marker color, but not yet members (excluded from the member grid).
+export type InterestedSchool = { name: string; location: string; divisions: string[]; lat: number; lng: number };
+export const INTERESTED_SCHOOLS: InterestedSchool[] = [
+  { name: 'DME Academy', location: 'Daytona, FL', divisions: ['Varsity'], lat: 29.2108, lng: -81.0228 },
+  { name: 'Montverde Academy', location: 'Montverde, FL', divisions: ['Varsity', 'JV', 'Middle School'], lat: 28.5969, lng: -81.6759 },
+  { name: 'Gulf South Academy', location: 'Niceville, FL', divisions: ['Varsity'], lat: 30.5169, lng: -86.4822 },
+  { name: '108 Performance Institute', location: 'Nashville, TN', divisions: ['Premier', 'Prospect'], lat: 36.1627, lng: -86.7816 },
+  { name: 'A+ Academy', location: 'Gaithersburg, MD', divisions: ['Prospect', 'Varsity'], lat: 39.1434, lng: -77.2014 },
+  { name: 'Pro Stock Royals', location: 'Charlotte, NC', divisions: ['Varsity', 'JV'], lat: 35.2271, lng: -80.8431 },
+];
+
 /* ---------------------------------------------------------------------------
  * Contact
  * ------------------------------------------------------------------------- */

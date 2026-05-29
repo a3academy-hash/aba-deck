@@ -44,13 +44,14 @@ export function ChampionshipExperience() {
           </Reveal>
           <Reveal
             delay={100}
-            className="relative flex items-end overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-tr from-graphite-900 to-navy-700 p-6"
+            className="relative flex flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-tr from-graphite-900 to-navy-700 p-6"
           >
             <div className="bg-grid absolute inset-0 opacity-40" aria-hidden="true" />
-            <span className="relative text-sm font-medium text-silver-200">Postseason under the lights</span>
-            <span className="absolute right-5 top-5 text-[10px] uppercase tracking-widest text-steel">
-              Image placeholder
-            </span>
+            <div className="relative">
+              <span className="chip border border-white/15 bg-white/5 text-silver-200">Postseason format</span>
+              <h3 className="mt-3 text-2xl font-bold text-white">Double Elimination</h3>
+              <p className="mt-1 text-sm text-silver-200/80">True playoff baseball.</p>
+            </div>
           </Reveal>
         </div>
       </div>

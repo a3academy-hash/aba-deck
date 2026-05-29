@@ -2,17 +2,14 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { FOUNDING_SCHOOLS, type FoundingSchool } from '@/lib/content';
+import { FOUNDING_SCHOOLS, INTERESTED_SCHOOLS } from '@/lib/content';
 import { MAP_ASPECT_K, MAP_BBOX, MAP_VIEWBOX, STATE_PATHS } from '@/lib/mapGeo';
 
 /**
- * Founding-members locator over a real Southeast-US basemap.
- *
- * `lib/mapGeo.ts` is auto-generated from public-domain US-states GeoJSON,
- * projected (equirectangular + cos-lat aspect correction) onto a fixed
- * viewBox. We re-run the IDENTICAL projection here for the school markers, so
- * every dot sits on the correct spot of the rendered states. No map library —
- * the geometry is baked in at author time.
+ * Founding-members + interested-programs locator over a real East-Coast
+ * basemap. `lib/mapGeo.ts` is auto-generated from public-domain US-states
+ * GeoJSON, projected onto a fixed viewBox. We re-run the IDENTICAL projection
+ * here for the markers, so every dot sits on the correct spot. No map library.
  */
 
 const { w: VW, h: VH } = MAP_VIEWBOX;
@@ -21,7 +18,6 @@ const hLat = MAP_BBOX.latMax - MAP_BBOX.latMin;
 const px = (lng: number) => (((lng - MAP_BBOX.lngMin) * MAP_ASPECT_K) / wLng) * VW;
 const py = (lat: number) => ((MAP_BBOX.latMax - lat) / hLat) * VH;
 
-// Orientation labels at approximate state-interior points.
 const STATE_LABELS = [
   { t: 'FLA.', lat: 28.1, lng: -81.8 },
   { t: 'GA.', lat: 32.7, lng: -83.4 },
@@ -30,16 +26,39 @@ const STATE_LABELS = [
   { t: 'N.C.', lat: 35.5, lng: -79.4 },
   { t: 'TENN.', lat: 35.9, lng: -86.3 },
   { t: 'VA.', lat: 37.6, lng: -78.7 },
+  { t: 'MD.', lat: 39.3, lng: -77.0 },
 ];
 
-const mapped = FOUNDING_SCHOOLS.filter(
-  (s): s is FoundingSchool & { lat: number; lng: number } => s.lat != null && s.lng != null,
-);
-const unmapped = FOUNDING_SCHOOLS.filter((s) => s.lat == null || s.lng == null);
+type MapPoint = {
+  name: string;
+  location?: string;
+  divisions: string[];
+  lat: number;
+  lng: number;
+  kind: 'member' | 'interested';
+  logo?: string;
+  championships?: string[];
+  membership?: string;
+};
+
+const POINTS: MapPoint[] = [
+  ...FOUNDING_SCHOOLS.filter((s) => s.lat != null && s.lng != null).map(
+    (s): MapPoint => ({ ...s, lat: s.lat!, lng: s.lng!, kind: 'member' }),
+  ),
+  ...INTERESTED_SCHOOLS.map((s): MapPoint => ({ ...s, kind: 'interested' })),
+];
+
+const COLOR = { champion: '#fbbf24', memberActive: '#ffffff', member: '#9fb3c8', interested: '#38bdf8' };
+
+function markerColor(p: MapPoint, isActive: boolean) {
+  if (p.kind === 'interested') return COLOR.interested;
+  if ((p.championships?.length ?? 0) > 0) return COLOR.champion;
+  return isActive ? COLOR.memberActive : COLOR.member;
+}
 
 export function InteractiveMap() {
   const [selected, setSelected] = useState<string>('Georgia Premier Academy');
-  const active = mapped.find((s) => s.name === selected) ?? mapped[0];
+  const active = POINTS.find((s) => s.name === selected) ?? POINTS[0];
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -47,16 +66,15 @@ export function InteractiveMap() {
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-navy-900">
         <div className="hero-spotlight pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />
         <span className="absolute left-4 top-4 z-10 text-[10px] font-semibold uppercase tracking-[0.2em] text-steel">
-          Founding members · East Coast
+          Members &amp; interested · East Coast
         </span>
 
         <svg
           viewBox={`0 0 ${VW} ${VH}`}
           className="block h-auto w-full"
           role="img"
-          aria-label="Map of founding member academies across the Southeast United States"
+          aria-label="Map of ABA member and interested academies across the East Coast"
         >
-          {/* States */}
           <g>
             {STATE_PATHS.map((s) => (
               <path
@@ -70,7 +88,6 @@ export function InteractiveMap() {
             ))}
           </g>
 
-          {/* Orientation labels */}
           <g>
             {STATE_LABELS.map((l) => (
               <text
@@ -86,14 +103,12 @@ export function InteractiveMap() {
             ))}
           </g>
 
-          {/* Markers */}
           <g>
-            {mapped.map((s) => {
+            {POINTS.map((s) => {
               const cx = px(s.lng);
               const cy = py(s.lat);
               const isActive = s.name === active.name;
-              const isChamp = (s.championships?.length ?? 0) > 0;
-              const fill = isChamp ? '#fbbf24' : isActive ? '#ffffff' : '#9fb3c8';
+              const fill = markerColor(s, isActive);
               return (
                 <g
                   key={s.name}
@@ -116,7 +131,13 @@ export function InteractiveMap() {
                       <animate attributeName="opacity" values="0.7;0;0.7" dur="2.2s" repeatCount="indefinite" />
                     </circle>
                   )}
-                  <circle r={isActive ? 13 : 10} fill={fill} stroke="#06162a" strokeWidth={3} />
+                  <circle
+                    r={isActive ? 13 : 10}
+                    fill={fill}
+                    stroke="#06162a"
+                    strokeWidth={3}
+                    strokeDasharray={s.kind === 'interested' ? '3 2' : undefined}
+                  />
                 </g>
               );
             })}
@@ -130,7 +151,14 @@ export function InteractiveMap() {
           key={active.name}
           className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 [animation:fade-up_0.4s_var(--ease-premium)_both]"
         >
-          <span className="text-[10px] uppercase tracking-wider text-steel">{active.membership ?? 'Founding Member'}</span>
+          {active.kind === 'interested' ? (
+            <span className="chip bg-sky-400/15 text-[10px] text-sky-300">Interested academy</span>
+          ) : (
+            <span className="text-[10px] uppercase tracking-wider text-steel">
+              {active.membership ?? 'Founding Member'}
+            </span>
+          )}
+
           <div className="mt-3 flex items-center gap-3">
             {active.logo && (
               <span className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/10">
@@ -166,23 +194,21 @@ export function InteractiveMap() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 px-1 text-xs text-steel">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-1 text-xs text-steel">
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> Division champion
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-steel" /> Founding member
+            <span className="h-2.5 w-2.5 rounded-full bg-steel" /> Member academy
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-sky-400" /> Interested
           </span>
         </div>
 
         <p className="px-1 text-xs leading-relaxed text-steel">
-          Tap a marker to view a program.
-          {unmapped.length > 0 && (
-            <>
-              {' '}Locations to be announced:{' '}
-              <span className="text-silver-200/80">{unmapped.map((s) => s.name).join(', ')}.</span>
-            </>
-          )}
+          Tap a marker to view a program — {FOUNDING_SCHOOLS.length} member academies and{' '}
+          {INTERESTED_SCHOOLS.length} programs that have expressed interest.
         </p>
       </div>
     </div>
