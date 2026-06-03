@@ -365,6 +365,103 @@ export const BUDGET_PDFS: BudgetPdf[] = [
 ];
 
 /* ---------------------------------------------------------------------------
+ * Home-game hosting budget — per-division cost of hosting home games.
+ * Figures supplied by the league as a rough planning guide (not an official
+ * budget). "Per game" = umpires + baseballs (field rental is venue-specific,
+ * hence "Custom"). The JV and Middle "per game" cells were derived from that
+ * same sum to fill the column ($200+$55=$255; $180+$55=$235); season totals
+ * (per game × home games) were provided directly and check out.
+ * ------------------------------------------------------------------------- */
+export type HostingRow = {
+  division: string;
+  homeGames: string;
+  fieldRental: string;
+  umpires: string;
+  baseballs: string;
+  perGame: string;
+  perSeason: string;
+};
+
+export const HOSTING_BUDGET: HostingRow[] = [
+  { division: 'Premier',  homeGames: '15', fieldRental: 'Custom', umpires: '$240', baseballs: '$80', perGame: '$320', perSeason: '$4,800' },
+  { division: 'Prospect', homeGames: '15', fieldRental: 'Custom', umpires: '$240', baseballs: '$80', perGame: '$320', perSeason: '$4,800' },
+  { division: 'JV',       homeGames: '12', fieldRental: 'Custom', umpires: '$200', baseballs: '$55', perGame: '$255', perSeason: '$3,060' },
+  { division: 'Middle',   homeGames: '9',  fieldRental: 'Custom', umpires: '$180', baseballs: '$55', perGame: '$235', perSeason: '$2,115' },
+];
+
+export const HOSTING_COLUMNS = [
+  { key: 'division',    label: 'Division' },
+  { key: 'homeGames',   label: 'Home games' },
+  { key: 'fieldRental', label: 'Field rental' },
+  { key: 'umpires',     label: 'Umpires' },
+  { key: 'baseballs',   label: 'Baseballs' },
+  { key: 'perGame',     label: 'Per game' },
+  { key: 'perSeason',   label: 'Per season' },
+] as const;
+
+/* ---------------------------------------------------------------------------
+ * Road / travel budget — estimated road series and travel cost per division.
+ * Road games carry no game fees; they only incur travel. Van vs. charter-bus
+ * options are per-trip estimates. Figures supplied by the league as a rough
+ * guide, subject to change by division and season.
+ * ------------------------------------------------------------------------- */
+export type TravelRow = {
+  division: string;
+  roadSeries: string;
+  bigTrips: string;
+  hotelNightsPerTrip: string;
+  totalHotelNights: string;
+  vans: string;
+  charterBus: string;
+};
+
+export const TRAVEL_BUDGET: TravelRow[] = [
+  { division: 'Premier',  roadSeries: '4', bigTrips: '2', hotelNightsPerTrip: '2.5', totalHotelNights: '10', vans: '$2,500', charterBus: '$7,500' },
+  { division: 'Prospect', roadSeries: '4', bigTrips: '2', hotelNightsPerTrip: '2.5', totalHotelNights: '10', vans: '$2,500', charterBus: '$7,500' },
+  { division: 'Varsity',  roadSeries: '4', bigTrips: '1', hotelNightsPerTrip: '1.5', totalHotelNights: '6',  vans: '$2,500', charterBus: '$7,500' },
+  { division: 'JV',       roadSeries: '4', bigTrips: '1', hotelNightsPerTrip: '1.5', totalHotelNights: '6',  vans: '$2,500', charterBus: '$7,500' },
+  { division: 'Middle',   roadSeries: '4', bigTrips: '1', hotelNightsPerTrip: '1.4', totalHotelNights: '6',  vans: '$2,500', charterBus: '$7,500' },
+];
+
+export const TRAVEL_COLUMNS = [
+  { key: 'division',           label: 'Division' },
+  { key: 'roadSeries',         label: 'Road series' },
+  { key: 'bigTrips',           label: 'Out-of-state trips' },
+  { key: 'hotelNightsPerTrip', label: 'Hotel nights / trip' },
+  { key: 'totalHotelNights',   label: 'Total hotel nights' },
+  { key: 'vans',               label: 'Vans (est.)' },
+  { key: 'charterBus',         label: 'Charter bus (est.)' },
+] as const;
+
+/* Projected conference games per division (per season). */
+export const CONFERENCE_GAMES = [
+  { division: 'Premier',       games: '30' },
+  { division: 'Prospect',      games: '30' },
+  { division: 'Varsity',       games: '24' },
+  { division: 'JV',            games: '24' },
+  { division: 'Middle School', games: '18' },
+];
+
+/* Footnotes that sit beneath the budget grids. */
+export const BUDGET_NOTES = [
+  {
+    title: 'Home teams may also cover',
+    body: 'Official scorekeeping via GameChanger, livestreaming, and — for Premier — Trackman tagging.',
+  },
+  {
+    title: 'Umpires',
+    body: 'Historically, each team has booked, scheduled, and negotiated its own umpires for home games. That could change with league-negotiated and mandated deals in the future.',
+  },
+  {
+    title: 'Baseballs',
+    body: 'The ABA uses Rawlings stamped ABA balls as the official league baseball. Premier and Prospect are $73/doz; Varsity, JV, and Middle School are $55/doz.',
+  },
+];
+
+export const BUDGET_DISCLAIMER =
+  'Road games carry no game fees — only travel costs. Estimates are subject to change and may differ by division or season. This is a rough planning guide, not an official budget.';
+
+/* ---------------------------------------------------------------------------
  * Governance & Standards
  * ------------------------------------------------------------------------- */
 export const GOVERNANCE_INTRO = {

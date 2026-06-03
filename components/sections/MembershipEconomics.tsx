@@ -3,6 +3,7 @@ import { Reveal } from '@/components/Reveal';
 import { PricingTable } from '@/components/PricingTable';
 import { PDFDownloadCard } from '@/components/PDFDownloadCard';
 import { CostCalculator } from '@/components/CostCalculator';
+import { BudgetTables } from '@/components/BudgetTables';
 import { BUDGET_PDFS, ECONOMICS_INTRO, ECONOMICS_NOTES } from '@/lib/content';
 
 export function MembershipEconomics() {
@@ -28,6 +29,16 @@ export function MembershipEconomics() {
             <p className="mt-2 text-sm leading-relaxed text-muted">{note.body}</p>
           </Reveal>
         ))}
+      </div>
+
+      {/* Per-division budget grids */}
+      <Reveal className="mt-14">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-steel-deep">
+          Per-division budget
+        </h3>
+      </Reveal>
+      <div className="mt-6">
+        <BudgetTables />
       </div>
 
       {/* Calculator */}
